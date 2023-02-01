@@ -165,6 +165,9 @@
                      "name": "WIZnet W5500-EVB-Pico"
                   },
                   {
+                     "name": "CONTROLLINO NEO Core"
+                  },
+                  {
                      "name": "Generic RP2040"
                   }
                ],
