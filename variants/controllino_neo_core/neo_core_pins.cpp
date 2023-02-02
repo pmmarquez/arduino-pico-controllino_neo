@@ -1,5 +1,12 @@
-#include "neo_core_pins.h"
+/*
+ * Copyright (c) 2023 CONTROLLINO GmbH.
+ *
+ * SPDX-License-Identifier: MIT
+ */
 
+#include "neo_pin.h"
+// #include "neo_core_pins.h"
+ 
 ControllinoNeoPin  AI0(MCP356X_CH_CH0, ControllinoNeoPin::MCP356X_PIN);
 ControllinoNeoPin  AI1(MCP356X_CH_CH1, ControllinoNeoPin::MCP356X_PIN);
 ControllinoNeoPin  AI2(MCP356X_CH_CH2, ControllinoNeoPin::MCP356X_PIN);
@@ -23,7 +30,6 @@ ControllinoNeoPin  DO0(14, ControllinoNeoPin::NATIVE_PIN);
 ControllinoNeoPin  DO1(22, ControllinoNeoPin::NATIVE_PIN);
 ControllinoNeoPin  DO2(23, ControllinoNeoPin::NATIVE_PIN);
 ControllinoNeoPin  DO3(24, ControllinoNeoPin::NATIVE_PIN);
-
 ControllinoNeoPin  DO4(6, ControllinoNeoPin::CY8C95XX_PIN);
 ControllinoNeoPin  DO5(7, ControllinoNeoPin::CY8C95XX_PIN);
 ControllinoNeoPin  DO6(8, ControllinoNeoPin::CY8C95XX_PIN);

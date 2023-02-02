@@ -1,5 +1,15 @@
 {
     "files.associations": {
-        "hw_platform.h": "c"
+        "hw_platform.h": "c",
+        "format": "cpp",
+        "future": "cpp",
+        "istream": "cpp",
+        "memory": "cpp",
+        "type_traits": "cpp",
+        "xlocmes": "cpp",
+        "xlocmon": "cpp",
+        "xlocnum": "cpp",
+        "xloctime": "cpp",
+        "functional": "cpp"
     }
 }
