@@ -4,8 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "neo_pin.h"
-// #include "neo_core_pins.h"
+#include "neo_pins.h"
  
 ControllinoNeoPin  AI0(MCP356X_CH_CH0, ControllinoNeoPin::MCP356X_PIN);
 ControllinoNeoPin  AI1(MCP356X_CH_CH1, ControllinoNeoPin::MCP356X_PIN);
@@ -30,7 +29,7 @@ ControllinoNeoPin  DO0(14, ControllinoNeoPin::NATIVE_PIN);
 ControllinoNeoPin  DO1(22, ControllinoNeoPin::NATIVE_PIN);
 ControllinoNeoPin  DO2(23, ControllinoNeoPin::NATIVE_PIN);
 ControllinoNeoPin  DO3(24, ControllinoNeoPin::NATIVE_PIN);
-ControllinoNeoPin  DO4(6, ControllinoNeoPin::CY8C95XX_PIN);
-ControllinoNeoPin  DO5(7, ControllinoNeoPin::CY8C95XX_PIN);
-ControllinoNeoPin  DO6(8, ControllinoNeoPin::CY8C95XX_PIN);
-ControllinoNeoPin  DO7(9, ControllinoNeoPin::CY8C95XX_PIN);
+ControllinoNeoPin  DO4(CY8C95XX_GPIO_6, ControllinoNeoPin::CY8C95XX_PIN);
+ControllinoNeoPin  DO5(CY8C95XX_GPIO_7, ControllinoNeoPin::CY8C95XX_PIN);
+ControllinoNeoPin  DO6(CY8C95XX_GPIO_8, ControllinoNeoPin::CY8C95XX_PIN);
+ControllinoNeoPin  DO7(CY8C95XX_GPIO_9, ControllinoNeoPin::CY8C95XX_PIN);

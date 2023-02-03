@@ -19,7 +19,6 @@
  
 /**
  * \brief Class to diferenciate CONTROLLINO NEO pins
- * 
  */
 class ControllinoNeoPin{
 public:
@@ -44,7 +43,6 @@ private:
  
 /**
  *\brief Arduino API functions for compatibility with CONTROLLINO NEO
- * 
  */
 void pinMode(ControllinoNeoPin pin, PinMode mode);
 PinStatus digitalRead(ControllinoNeoPin pin);
@@ -54,7 +52,6 @@ void analogWrite(ControllinoNeoPin pin, int value);
  
 /**
  *\brief Public instances of internal peripherals drivers
- * 
  */
 extern cy8c95xx_t neo_cy8c9520; 
 extern mcp356x_t neo_mcp3564;
@@ -62,7 +59,6 @@ extern ad56x4_t neo_ad5664;
 
 /**
  *\brief Neo core pins
- *
  */
 extern ControllinoNeoPin  AI0;
 extern ControllinoNeoPin  AI1;

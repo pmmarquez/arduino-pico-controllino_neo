@@ -33,6 +33,5 @@
 #define WIRE_HOWMANY   (2u)
 
 #include "../generic/common.h"
-#include "neo_pin.h"
-// #include "neo_core_pins.h"
+#include "neo_pins.h"
 

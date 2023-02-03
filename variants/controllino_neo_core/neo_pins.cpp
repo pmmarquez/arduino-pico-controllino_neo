@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
  
-#include "neo_pin.h"
+#include "neo_pins.h"
 #include "string.h"
 #include "hardware/i2c.h"
 #include "hardware/spi.h"
@@ -13,11 +13,11 @@ cy8c95xx_t neo_cy8c9520;
 mcp356x_t neo_mcp3564;
 ad56x4_t neo_ad5664;
  
-#define NEO_AI_CS      14
+#define NEO_AI_CS      CY8C95XX_GPIO_14
 void mcp356x_cs_select(mcp356x_t* dac) { cy8c95xx_write_pin(&neo_cy8c9520, NEO_AI_CS, 0); }
 void mcp356x_cs_deselect(mcp356x_t* dac) { cy8c95xx_write_pin(&neo_cy8c9520, NEO_AI_CS, 1); }
  
-#define NEO_AO_CS       15
+#define NEO_AO_CS      CY8C95XX_GPIO_15
 void ad56x4_cs_select(ad56x4_t* dac) { cy8c95xx_write_pin(&neo_cy8c9520, NEO_AO_CS, 0); }
 void ad56x4_cs_deselect(ad56x4_t* dac) { cy8c95xx_write_pin(&neo_cy8c9520, NEO_AO_CS, 1); }
 
@@ -83,7 +83,7 @@ void pinMode(ControllinoNeoPin pin, PinMode mode)
       break;
     }
     cy8c95xx_pin_mode(&neo_cy8c9520, (int)pin.getPin(), dir, drv);
-    // Pending disable pwm by default
+    cy8c95xx_sel_pwm_pin(&neo_cy8c9520, (int)pin.getPin(), 0); // disable PWM
     break;
   default:
     // Other pin types has fixed modes
@@ -133,6 +133,7 @@ void digitalWrite(ControllinoNeoPin pin, PinStatus value)
     break;
   case ControllinoNeoPin::CY8C95XX_PIN:
     cy8c95xx_write_pin(&neo_cy8c9520, (int)pin.getPin(), (uint8_t)value);
+    cy8c95xx_sel_pwm_pin(&neo_cy8c9520, (int)pin.getPin(), 0); // disable PWM
     break;
   default:
     // Other pin types are analog only
@@ -151,7 +152,7 @@ int analogRead(ControllinoNeoPin pin)
   case ControllinoNeoPin::MCP356X_PIN:
     uint8_t txdata[7];
     uint8_t dummySgn;
-    uint32_t dummyMaxResolution;
+    uint32_t dummyRes;
     memset(txdata, 0x00, sizeof(txdata));
     txdata[0] = MCP356X_MUX_VIN_NEG_VREF_EXT_MINUS;
     switch (pin.getPin())
@@ -179,7 +180,7 @@ int analogRead(ControllinoNeoPin pin)
       break;
     }
     mcp356x_iwrite(&neo_mcp3564, MCP356X_REG_MUX, txdata, sizeof(txdata));
-    mcp356x_read_raw_adc(&neo_mcp3564, (uint32_t*)&adcValue, &dummySgn, &dummyMaxResolution);
+    mcp356x_read_raw_adc(&neo_mcp3564, (uint32_t*)&adcValue, &dummySgn, &dummyRes);
     break;
   default:
     // Other pin types are digital or analog output only
@@ -196,7 +197,83 @@ void analogWrite(ControllinoNeoPin pin, int value)
     analogWrite(pin.getPin(), value);
     break;
   case ControllinoNeoPin::CY8C95XX_PIN:
-    // Missing 
+    cy8c95xx_pwm_cfg_t pwmCfg;
+    float dummyFreq;
+    float dummyDutyCyc;
+    uint8_t pulseWid;
+    pulseWid = (uint8_t)value & 0xFF; // 8 bit resolution
+    if (pulseWid < 0xFF) {
+      switch (pin.getPin())
+      {
+      case CY8C95XX_GPIO_0:
+        pwmCfg.pwm_sel = CY8C95XX_GPIO_0_PWM;
+        break;
+      case CY8C95XX_GPIO_1:
+        pwmCfg.pwm_sel = CY8C95XX_GPIO_1_PWM;
+        break;
+      case CY8C95XX_GPIO_2:
+        pwmCfg.pwm_sel = CY8C95XX_GPIO_2_PWM;
+        break;
+      case CY8C95XX_GPIO_3:
+        pwmCfg.pwm_sel = CY8C95XX_GPIO_3_PWM;
+        break;
+      case CY8C95XX_GPIO_4:
+        pwmCfg.pwm_sel = CY8C95XX_GPIO_4_PWM;
+        break;
+      case CY8C95XX_GPIO_5:
+        pwmCfg.pwm_sel = CY8C95XX_GPIO_5_PWM;
+        break;
+      case CY8C95XX_GPIO_6:
+        pwmCfg.pwm_sel = CY8C95XX_GPIO_6_PWM;
+        break;
+      case CY8C95XX_GPIO_7:
+        pwmCfg.pwm_sel = CY8C95XX_GPIO_7_PWM;
+        break;
+      case CY8C95XX_GPIO_8:
+        pwmCfg.pwm_sel = CY8C95XX_GPIO_8_PWM;
+        break;
+      case CY8C95XX_GPIO_9:
+        pwmCfg.pwm_sel = CY8C95XX_GPIO_9_PWM;
+        break;
+      case CY8C95XX_GPIO_10:
+        pwmCfg.pwm_sel = CY8C95XX_GPIO_10_PWM;
+        break;
+      case CY8C95XX_GPIO_11:
+        pwmCfg.pwm_sel = CY8C95XX_GPIO_11_PWM;
+        break;
+      case CY8C95XX_GPIO_12:
+        pwmCfg.pwm_sel = CY8C95XX_GPIO_12_PWM;
+        break;
+      case CY8C95XX_GPIO_13:
+        pwmCfg.pwm_sel = CY8C95XX_GPIO_13_PWM;
+        break;
+      case CY8C95XX_GPIO_14:
+        pwmCfg.pwm_sel = CY8C95XX_GPIO_15_PWM;
+        break;
+      case CY8C95XX_GPIO_16:
+        pwmCfg.pwm_sel = CY8C95XX_GPIO_16_PWM;
+        break;
+      case CY8C95XX_GPIO_17:
+        pwmCfg.pwm_sel = CY8C95XX_GPIO_17_PWM;
+        break;
+      case CY8C95XX_GPIO_18:
+        pwmCfg.pwm_sel = CY8C95XX_GPIO_18_PWM;
+        break;
+      case CY8C95XX_GPIO_19:
+        pwmCfg.pwm_sel = CY8C95XX_GPIO_19_PWM;
+        break;
+      }
+      pwmCfg.clk_src = CY8C95XX_PWM_CLK_SRC_367_6_HZ;
+      pwmCfg.devider = 0x01;
+      pwmCfg.period = 0xFF;
+      pwmCfg.pulse_wid = pulseWid;
+      cy8c95xx_set_pwm_cfg(&neo_cy8c9520, &pwmCfg, &dummyDutyCyc, &dummyFreq); // Set duty cycle to selected PWM
+      cy8c95xx_sel_pwm_pin(&neo_cy8c9520, (int)pin.getPin(), 1); // Enable pwm in output
+    }
+    else { // if pulseWid 0xFF just output HIGH
+      cy8c95xx_sel_pwm_pin(&neo_cy8c9520, (int)pin.getPin(), 0); // Disable pwm in output
+    }
+    cy8c95xx_write_pin(&neo_cy8c9520, (int)pin.getPin(), 1); // Enable output 
     break;
   case ControllinoNeoPin::AD56X4_PIN:
     ad56x4_write_input_reg(&neo_ad5664, (uint8_t)pin.getPin(), ((uint16_t)value & 0xFFFF)); // 16 bits resolution
