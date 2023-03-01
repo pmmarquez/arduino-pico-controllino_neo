@@ -17,56 +17,52 @@
 extern "C" {
 #endif
  
-#ifdef PLATFORM_RP2040
-#include "pico/stdlib.h"
-#include "hardware/i2c.h"
-#include "hardware/spi.h"
-
+#include <stdint.h>
+#include <stddef.h>
+#include <stdbool.h>
+ 
 /**
- * \brief RP2040 default I2C settings
+ * \brief Platform I2C settings
  * \ingroup platform
  */
-#define hw_i2c_t           i2c_inst_t
-#define PLATFORM_I2C_HW    i2c0
-#define PLATFORM_I2C_SPEED 100000
-#define PLATFORM_I2C_SDA   4
-#define PLATFORM_I2C_SCL   5
-
+typedef struct _hw_i2c_t* hw_i2c_t;
+extern hw_i2c_t PLATFORM_I2C_HW;
+extern const unsigned int PLATFORM_I2C_SPEED;
+extern const int PLATFORM_I2C_SDA;
+extern const int PLATFORM_I2C_SCL;
+ 
 /**
- * \brief RP2040 default SPI settings
+ * \brief Platform SPI settings
  * \ingroup platform
  */
-#define hw_spi_t           spi_inst_t
-#define PLATFORM_SPI_HW    spi0
-#define PLATFORM_SPI_SPEED 1000000
-#define PLATFORM_SPI_MOSI  19
-#define PLATFORM_SPI_MISO  16
-#define PLATFORM_SPI_SCK   18
-
-#endif /* PLATFORM_RP2040 */
+typedef struct _hw_spi_t* hw_spi_t;
+extern hw_spi_t PLATFORM_SPI_HW;
+extern const unsigned int PLATFORM_SPI_SPEED;
+extern const int PLATFORM_SPI_MOSI;
+extern const int PLATFORM_SPI_MISO;
+extern const int PLATFORM_SPI_SCK;
  
 /**
  * \brief Error codes
  * \ingroup platform
  */
-typedef enum
-{
-    PLATFORM_OK = 0x00,
-    PLATFORM_ARGUMENT_ERR =   0x01,
-    PLATFORM_GPIO_INIT_ERR =  0x02,
-    PLATFORM_I2C_INIT_ERR =   0x03,
-    PLATFORM_I2C_COM_ERR =    0x04,
-    PLATFORM_SPI_INIT_ERR =   0x05,
-    PLATFORM_SPI_COM_ERR =    0x06,
-} platform_err_code_t;
- 
+enum {
+    PLATFORM_OK =                   0x00,
+    PLATFORM_ARGUMENT_ERR =         0x01,
+    PLATFORM_GPIO_INIT_ERR =        0x02,
+    PLATFORM_I2C_INIT_ERR =         0x03,
+    PLATFORM_I2C_COM_ERR =          0x04,
+    PLATFORM_SPI_INIT_ERR =         0x05,
+    PLATFORM_SPI_COM_ERR =          0x06,
+};
+typedef int platform_err_code_t;
 /**
  * \brief GPIO direction
  * \ingroup platform
  */
 typedef enum
 {
-    PLATFORM_GPIO_IN,
+    PLATFORM_GPIO_IN =              0x0,
     PLATFORM_GPIO_OUT
 } platform_gpio_dir_t;
  
@@ -76,9 +72,9 @@ typedef enum
  */
 typedef enum
 {
-    PLATFORM_GPIO_PULL_DISABLED,
-    PLATFORM_GPIO_PULL_UP,
-    PLATFORM_GPIO_PULL_DOWN
+    PLATFORM_GPIO_PULL_DISABLED =   0x0,
+    PLATFORM_GPIO_PULL_UP =     	0x1,
+    PLATFORM_GPIO_PULL_DOWN =       0x2,
 } platform_gpio_pull_mod_t;
  
 /**
@@ -87,10 +83,10 @@ typedef enum
  */
 typedef enum
 {
-    PLATFORM_SPI_MODE_0 = 0x0,
-    PLATFORM_SPI_MODE_1 = 0x1,
-    PLATFORM_SPI_MODE_2 = 0x2,
-    PLATFORM_SPI_MODE_3 = 0x3
+    PLATFORM_SPI_MODE_0 =           0x0,
+    PLATFORM_SPI_MODE_1 =           0x1,
+    PLATFORM_SPI_MODE_2 =           0x2,
+    PLATFORM_SPI_MODE_3 =           0x3
 } platform_spi_mode_t;
  
 /**
@@ -99,8 +95,8 @@ typedef enum
  */
 typedef enum
 {
-    PLATFORM_SPI_LSBFIRST = 0x0,
-    PLATFORM_SPI_MSBFIRST = 0x1
+    PLATFORM_SPI_LSBFIRST =         0x0,
+    PLATFORM_SPI_MSBFIRST =         0x1
 } platform_spi_bit_order_t;
  
 /*!
@@ -113,7 +109,7 @@ typedef enum
  * \return PLATFORM_GPIO_INIT_ERR : error
  *         PLATFORM_OK : successful
  */
-int platform_gpio_init(int pin, platform_gpio_dir_t dir, platform_gpio_pull_mod_t pull);
+platform_err_code_t platform_gpio_init(int pin, platform_gpio_dir_t dir, platform_gpio_pull_mod_t pull);
  
 /*!
  * \brief Set out gpio value
@@ -122,7 +118,7 @@ int platform_gpio_init(int pin, platform_gpio_dir_t dir, platform_gpio_pull_mod_
  * \param pin pin number -1 for unused pins
  * \param value boolean true for HIGH level, false for LOW level
  */
-void platform_gpio_set(int pin, bool value);
+platform_err_code_t platform_gpio_set(int pin, bool value);
  
 /*!
  * \brief Get in gpio value
@@ -132,7 +128,15 @@ void platform_gpio_set(int pin, bool value);
  * \return true HIGH level
  *         false LOW level default if pin is -1
  */
-bool platform_gpio_get(int pin);
+platform_err_code_t platform_gpio_get(int pin, bool* value);
+ 
+/*!
+ * \brief Get system time microseconds
+ * \ingroup platform
+ *
+ * \return microseconds since system boot
+ */
+uint64_t platform_get_us(void);
  
 /*!
  * \brief Wait for specified milliseconds
@@ -161,7 +165,7 @@ void platform_sleep_us(uint64_t us);
  * \return PLATFORM_I2C_INIT_ERR : error
  *         PLATFORM_OK : successful
  */
-int platform_i2c_init(hw_i2c_t* i2c_hw, uint speed, int sda_pin, int scl_pin);
+platform_err_code_t platform_i2c_init(hw_i2c_t i2c_hw, unsigned int speed, int sda_pin, int scl_pin);
  
 /*!
  * \brief Attempt to read specified number of bytes from address over I2C
@@ -174,7 +178,7 @@ int platform_i2c_init(hw_i2c_t* i2c_hw, uint speed, int sda_pin, int scl_pin);
  * \return PLATFORM_I2C_COM_ERR : error
  *         PLATFORM_OK : successful
  */
-int platform_i2c_read(hw_i2c_t* i2c_hw, uint8_t addr, uint8_t* rxdata, size_t len);
+platform_err_code_t platform_i2c_read(hw_i2c_t i2c_hw, uint8_t addr, uint8_t* rxdata, size_t len);
  
 /*!
  * \brief Attempt to write specified number of bytes to address over I2C
@@ -187,7 +191,7 @@ int platform_i2c_read(hw_i2c_t* i2c_hw, uint8_t addr, uint8_t* rxdata, size_t le
  * \return PLATFORM_I2C_COM_ERR : error
  *         PLATFORM_OK : successful
  */
-int platform_i2c_write(hw_i2c_t* i2c_hw, uint8_t addr, const uint8_t* txdata, size_t len);
+platform_err_code_t platform_i2c_write(hw_i2c_t i2c_hw, uint8_t addr, uint8_t* txdata, size_t len);
  
 /*!
  * \brief Init SPI interface
@@ -200,7 +204,7 @@ int platform_i2c_write(hw_i2c_t* i2c_hw, uint8_t addr, const uint8_t* txdata, si
  * \return PLATFORM_SPI_INIT_ERR : error
  *         PLATFORM_OK : successful
  */
-int platform_spi_init(hw_spi_t* spi_hw, uint speed, int mosi_pin, int miso_pin, int sck_pin);
+platform_err_code_t platform_spi_init(hw_spi_t spi_hw, unsigned int speed, int mosi_pin, int miso_pin, int sck_pin);
  
 /**
  * \brief Change SPI settings
@@ -210,9 +214,10 @@ int platform_spi_init(hw_spi_t* spi_hw, uint speed, int mosi_pin, int miso_pin, 
  * \param mode SPI mode (0, 1, 2, 3)
  * \param bit_order SPI bit order
  * \return PLATFORM_ARGUMENT_ERR : error
+ *         PLATFORM_SPI_COM_ERR : error
  *         PLATFORM_OK : successful
  */
-int platform_spi_set_config(hw_spi_t* spi_hw, uint speed, uint8_t mode, uint8_t bit_order);
+platform_err_code_t platform_spi_set_config(hw_spi_t spi_hw, unsigned int speed, uint8_t mode, uint8_t bit_order);
  
 /**
  * \brief Write specified number of bytes to an SPI device
@@ -223,7 +228,7 @@ int platform_spi_set_config(hw_spi_t* spi_hw, uint speed, uint8_t mode, uint8_t 
  * \return PLATFORM_SPI_COM_ERR : error
  *         PLATFORM_OK : successful
  */
-int platform_spi_write(hw_spi_t* spi_hw, uint8_t* txdata, size_t len);
+platform_err_code_t platform_spi_write(hw_spi_t spi_hw, uint8_t* txdata, size_t len);
  
 /**
  * \brief Write and read specified number of bytes over SPI
@@ -235,8 +240,8 @@ int platform_spi_write(hw_spi_t* spi_hw, uint8_t* txdata, size_t len);
  * \return PLATFORM_SPI_COM_ERR : error
  *         PLATFORM_OK : successful
  */
-int platform_spi_write_read(hw_spi_t* spi_hw, uint8_t* txdata, uint8_t* rxdata, size_t len);
-
+platform_err_code_t platform_spi_write_read(hw_spi_t spi_hw, uint8_t* txdata, uint8_t* rxdata, size_t len);
+ 
 #ifdef __cplusplus
 }
 #endif
