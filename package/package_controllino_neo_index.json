@@ -12,7 +12,7 @@
         {
           "category": "Contributed",
           "name": "CONTROLLINO NEO Boards",
-          "url": "https://raw.githubusercontent.com/pmmarquez/arduino-pico-controllino_neo/controllino_neo_support/neo/controllino_neo-0.1.0.zip",
+          "url": "https://github.com/pmmarquez/arduino-pico-controllino_neo/releases/download/global/controllino_neo-0.1.0.zip",
           "version": "0.1.0",
           "architecture": "rp2040",
           "archiveFileName": "controllino_neo-0.1.0.zip",
