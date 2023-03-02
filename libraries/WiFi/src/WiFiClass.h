@@ -64,6 +64,7 @@ public:
         param ssid: Pointer to the SSID string.
     */
     int begin(const char* ssid);
+    int beginBSSID(const char* ssid, const uint8_t *bssid);
 
     /*  Start WiFi connection with WEP encryption.
         Configure a key into the device. The key type (WEP-40, WEP-104)
@@ -82,10 +83,14 @@ public:
         param ssid: Pointer to the SSID string.
         param passphrase: Passphrase. Valid characters in a passphrase
               must be between ASCII 32-126 (decimal).
+        param bssid: If non-null, the BSSID associated w/the SSID to connect to
     */
-    int begin(const char* ssid, const char *passphrase);
+    int begin(const char* ssid, const char *passphrase, const uint8_t *bssid = nullptr);
 
     bool connected();
+    bool isConnected() {
+        return connected();
+    }
     int8_t waitForConnectResult(unsigned long timeoutLength = 60000) {
         uint32_t now = millis();
         while (millis() - now < timeoutLength) {
@@ -381,9 +386,19 @@ public:
     void setFeedWatchdogFunc(FeedHostProcessorWatchdogFuncPointer func);
     void feedWatchdog();
 
+    // ESP8266 compatibility
+    void persistent(bool unused) {
+        (void) unused;
+    }
+
+    void hostname(const char *name) {
+        setHostname(name);
+    }
+
 private:
     int _timeout = 15000;
     String _ssid;
+    uint8_t _bssid[6];
     String _password;
     bool _wifiHWInitted = false;
     bool _apMode = false;

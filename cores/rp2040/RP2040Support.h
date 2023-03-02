@@ -27,6 +27,7 @@
 #include <hardware/structs/rosc.h>
 #include <hardware/structs/systick.h>
 #include <pico/multicore.h>
+#include <pico/rand.h>
 #include <pico/util/queue.h>
 #include "CoreMutex.h"
 #include "ccount.pio.h"
@@ -246,6 +247,11 @@ public:
         return clock_get_hz(clk_sys);
     }
 
+    // Get current CPU core number
+    static int cpuid() {
+        return sio_hw->cpuid;
+    }
+
     // Get CPU cycle count.  Needs to do magic to extens 24b HW to something longer
     volatile uint64_t _epoch = 0;
     inline uint32_t getCycleCount() {
@@ -336,27 +342,19 @@ public:
     _MFIFO fifo;
 
 
-    // TODO - Not so great HW random generator.  32-bits wide.  Cryptographers somewhere are crying
     uint32_t hwrand32() {
-        // Try and whiten the HW ROSC bit
-        uint32_t r = 0;
-        for (int k = 0; k < 32; k++) {
-            unsigned long int b;
-            do {
-                b = rosc_hw->randombit & 1;
-                if (b != (rosc_hw->randombit & 1)) {
-                    break;
-                }
-            } while (true);
-            r <<= 1;
-            r |= b;
-        }
-        // Stir using the cycle count LSBs.  In any WiFi use case this will be a random # since the connection time is not cycle-accurate
-        uint64_t rr = (((uint64_t)~r) << 32LL) | r;
-        rr >>= rp2040.getCycleCount() & 32LL;
-
-        return (uint32_t)rr;
+        return get_rand_32();
     }
+
+    bool isPicoW() {
+#if !defined(ARDUINO_RASPBERRY_PI_PICO_W)
+        return false;
+#else
+        extern bool __isPicoW;
+        return __isPicoW;
+#endif
+    }
+
 
 private:
     static void _SystickHandler() {

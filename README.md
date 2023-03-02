@@ -9,6 +9,9 @@ This is a port of the RP2040 (Raspberry Pi Pico processor) to the Arduino ecosys
 # Documentation
 See https://arduino-pico.readthedocs.io/en/latest/ along with the examples for more detailed usage information.
 
+# Contributing
+Read the [Contributing Guide](https://github.com/earlephilhower/arduino-pico/blob/master/docs/contrib.rst) for more information on submitting pull requests and porting libraries or sketches to this core.
+
 # Supported Boards
 * Raspberry Pi Pico
 * Raspberry Pi Pico W
@@ -160,7 +163,8 @@ The installed tools include a version of OpenOCD (in the pqt-openocd directory) 
 
 # Features
 * Adafruit TinyUSB Arduino (USB mouse, keyboard, flash drive, generic HID, CDC Serial, MIDI, WebUSB, others)
-* Generic Arduino USB Serial, Keyboard, and Mouse emulation
+* Bluetooth on the PicoW (Classic and BLE) with Keyboard, Mouse, Joystick, and Virtual Serial
+* Generic Arduino USB Serial, Keyboard, Joystick, and Mouse emulation
 * WiFi (Pico W)
 * HTTP client and server (WebServer)
 * SSL/TLS/HTTPS
@@ -191,6 +195,9 @@ Here are some links to coverage and additional tutorials for using `arduino-pico
 * Adafruit Feather RP2040 running LCD + TMP117 - https://www.youtube.com/watch?v=fKDeqZiIwHg
 * Demonstration of Servos and I2C in Korean - https://cafe.naver.com/arduinoshield/1201
 * Home Assistant Pico W integration starter project using Arduino - https://github.com/daniloc/PicoW_HomeAssistant_Starter
+* Tutorials for the Raspberry Pi Pico / uPesy RP2040 DevKit board 
+    - English version: https://www.upesy.com/blogs/tutorials/best-tutorials-for-rpi-pi-pico-with-arduino-code
+    - French version: https://www.upesy.fr/blogs/tutorials/best-tutorials-for-rpi-pi-pico-with-arduino-code
 
 # Contributing
 If you want to contribute or have bugfixes, drop me a note at <earlephilhower@yahoo.com> or open an issue/PR here.
